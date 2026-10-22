@@ -2,6 +2,7 @@
 
 **Interactive fault-finding assessment prototype for technical maintenance and field service roles.** Created for the SHL Senior Scientist technical work sample (September 2026). A demonstrator, **not** a validated employment assessment.
 
+<!-- Two ways in: publish the static site or serve it locally. -->
 ## Run the demo
 
 **Option A — GitHub Pages:** In your GitHub repository, open **Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)` → Save**. Once GitHub displays the published URL, open it. No server, database, API keys, or installation required for visitors.
@@ -14,6 +15,7 @@ python3 -m http.server 8000
 
 Open **http://localhost:8000** in your browser. On Windows, `py -m http.server 8000` may be available instead. ES modules mean that opening `index.html` via `file://` is **not** the supported way to run locally; serve it over HTTP as shown above.
 
+<!-- Quick tour for someone trying the prototype for the first time. -->
 ## Candidate walkthrough (2 minutes)
 
 1. Choose a case from **Service Case**. Each has the same surface symptom: the output lamp remains off.
@@ -21,6 +23,7 @@ Open **http://localhost:8000** in your browser. On Windows, `py -m http.server 8
 3. Review the evidence log, select which part failed (SW1, K1, or L1), and **Submit diagnosis**.
 4. Review the outcome and illustrative process score. Export the complete response as JSON, or try another case.
 
+<!-- Spoiler territory: the three voltage signatures reveal the culprit. -->
 ### Facilitator answer key (spoilers)
 
 | Case | Failed part | Readings: switch output / coil / contact / lamp terminal |
@@ -31,6 +34,7 @@ Open **http://localhost:8000** in your browser. On Windows, `py -m http.server 8
 
 The START command is held while diagnostic tests run. The physical design is intentionally simplified into logical stages. This is **not** a physically complete electrical schematic. All three faults have identical visible symptoms but distinguishable voltage signatures. Candidates can compare measurements to the proposed fault location; the simulator never randomizes responses.
 
+<!-- This is a demonstration rubric, not a hiring score. -->
 ## Scoring (illustrative)
 
 - **Diagnostic accuracy (0 or 60 points):** Did the candidate identify the scenario's faulty part?
@@ -64,6 +68,7 @@ npm test
 
 This runs `node:test` without installing dependencies. Node is **not required** to use the browser demo.
 
+<!-- The honest boundary: useful prototype, not validated assessment. -->
 ## Limitations and future work
 
 This single-system task is not an actual assessment of ability. The circuit and diagnostic information are intentionally simplified. Fault hypotheses are restricted to three known component failures; observation vectors are deterministic. Scoring is heuristic and unvalidated. Future work should incorporate SME-reviewed job-relevant scenarios, usability/accessibility research, cognitive interviews, psychometric calibration, fairness analyses, and criterion-related validation. See [WRITEUP.md](./WRITEUP.md).

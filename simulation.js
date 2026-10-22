@@ -1,5 +1,6 @@
 import { COMPONENTS, SCENARIOS, TESTS } from './scenarios.js';
 
+// Look up the active case before tracing the circuit.
 const findScenario = (id) => SCENARIOS.find((scenario) => scenario.id === id);
 
 // The START command is held on while measurements are taken.
@@ -11,10 +12,12 @@ export function getState(scenarioId, startPressed = true) {
   const relayCoil = inputOutput;
   const relayContact = relayCoil && scenario.fault !== 'relay';
   const lampTerminal = relayContact;
+  // Even full voltage cannot light a failed lamp.
   const lampLit = lampTerminal && scenario.fault !== 'lamp';
   return { inputOutput, relayCoil, relayContact, lampTerminal, lampLit };
 }
 
+// Match each test button to the state value it measures.
 const readingNames = {
   inputVoltage: 'inputOutput',
   relayCoil: 'relayCoil',
@@ -22,6 +25,7 @@ const readingNames = {
   lampTerminal: 'lampTerminal',
 };
 
+// Our virtual meter is delightfully predictable: 0 V or 24 V.
 export function runTest(scenarioId, testId) {
   const test = TESTS.find((entry) => entry.id === testId);
   if (!test) throw new Error(`Unknown test: ${testId}`);

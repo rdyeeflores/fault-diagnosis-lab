@@ -1,6 +1,7 @@
 import { COMPONENTS, SCENARIOS, TESTS, runTest, getState } from './simulation.js';
 import { evaluate } from './scoring.js';
 
+// Tiny DOM shortcut—keeps the UI wiring tidy.
 const $ = (id) => document.getElementById(id);
 const casePicker = $('case-picker');
 let observations = [];
@@ -9,9 +10,11 @@ let startedAt = Date.now();
 let submitted = false;
 let lastExport = null;
 
+// Keep a timestamped breadcrumb trail of what the candidate does.
 function logAction(kind, details) {
   actions.push({ atSeconds: Math.round((Date.now() - startedAt) / 1000), kind, ...details });
 }
+// Fresh case, fresh slate: clear everything from the last attempt.
 function resetCase() {
   observations = []; actions = []; submitted = false; lastExport = null; startedAt = Date.now();
   const scenario = SCENARIOS.find((s) => s.id === casePicker.value);
@@ -30,6 +33,7 @@ function resetCase() {
   $('status-label').textContent = 'FAULT REPORTED';
   logAction('scenario_started', { scenarioId: scenario.id });
 }
+// Ask the simulator for a reading and show it in the evidence log.
 function takeTest(testId) {
   if (submitted) return;
   const reading = runTest(casePicker.value, testId);
@@ -42,6 +46,7 @@ function takeTest(testId) {
   item.append(label, value); $('evidence-log').append(item);
   $('test-count').textContent = `${observations.length} test${observations.length === 1 ? '' : 's'}`;
 }
+// Lock in the diagnosis, score it, and explain the result.
 function submitDiagnosis() {
   if (submitted) return;
   const selection = document.querySelector('input[name="diagnosis"]:checked');
@@ -67,6 +72,7 @@ function submitDiagnosis() {
   $('results').classList.remove('hidden');
   $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+// Package the full diagnostic trail as a downloadable JSON file.
 function exportJson() {
   if (!lastExport) return;
   const blob = new Blob([JSON.stringify(lastExport, null, 2)], { type: 'application/json' });
@@ -74,11 +80,13 @@ function exportJson() {
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = `${casePicker.value}-diagnostic-response.json`;
   anchor.click(); URL.revokeObjectURL(url);
 }
+// Move along to the next mystery (and loop back at the end).
 function nextCase() {
   const i = SCENARIOS.findIndex((item) => item.id === casePicker.value);
   casePicker.value = SCENARIOS[(i + 1) % SCENARIOS.length].id;
   resetCase(); window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+// Build the controls once, then start the first case.
 function initialize() {
   SCENARIOS.forEach(({ id, title }) => { const option = document.createElement('option'); option.value = id; option.textContent = title; casePicker.append(option); });
   TESTS.forEach((test) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'test-button'; button.title = test.description; button.innerHTML = `<span class="test-name"></span><span aria-hidden="true">MEASURE →</span>`; button.querySelector('.test-name').textContent = test.title; button.addEventListener('click', () => takeTest(test.id)); $('test-buttons').append(button); });
